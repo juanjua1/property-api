@@ -1,13 +1,11 @@
 import { Controller, Get, Post, Delete, Param, UseGuards, Request, NotFoundException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { ProductsService } from '../products/products.service';
 
 @Controller('users')
 export class UsersController {
   constructor(
     private usersService: UsersService,
-    private productsService: ProductsService,
   ) {}
 
   @UseGuards(JwtAuthGuard)
@@ -36,14 +34,26 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Post('favorites/:productId')
   async addFavorite(@Request() req, @Param('productId') productId: string) {
-    // Verificar que el producto existe
-    await this.productsService.findOne(productId);
-    return this.usersService.addFavoriteProduct(req.user.userId, productId);
+    const updatedUser = await this.usersService.addFavoriteProduct(req.user.userId, productId);
+    if (!updatedUser) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+    return {
+      message: 'Producto agregado a favoritos',
+      favoriteProducts: updatedUser.favoriteProducts
+    };
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete('favorites/:productId')
   async removeFavorite(@Request() req, @Param('productId') productId: string) {
-    return this.usersService.removeFavoriteProduct(req.user.userId, productId);
+    const updatedUser = await this.usersService.removeFavoriteProduct(req.user.userId, productId);
+    if (!updatedUser) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+    return {
+      message: 'Producto removido de favoritos',
+      favoriteProducts: updatedUser.favoriteProducts
+    };
   }
 }

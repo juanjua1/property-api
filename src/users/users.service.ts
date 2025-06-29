@@ -15,7 +15,7 @@ export class UsersService {
   }
 
   async findById(id: string): Promise<UserDocument | null> {
-    return this.userModel.findById(id).populate('favoriteProducts').exec();
+    return this.userModel.findById(id).exec();
   }
   
   async create(email: string, password: string): Promise<User> {
@@ -44,16 +44,14 @@ export class UsersService {
     }
 
     // Verificar si el producto ya está en favoritos
-    const exists = user.favoriteProducts.some(
-      productRef => productRef.toString() === productId
-    );
+    const exists = user.favoriteProducts.includes(productId);
     
     if (!exists) {
-      user.favoriteProducts.push(productId as any);
+      user.favoriteProducts.push(productId);
       await user.save();
     }
     
-    return this.userModel.findById(userId).populate('favoriteProducts').exec();
+    return this.userModel.findById(userId).exec();
   }
 
   async removeFavoriteProduct(userId: string, productId: string): Promise<UserDocument | null> {
@@ -61,7 +59,7 @@ export class UsersService {
       userId,
       { $pull: { favoriteProducts: productId } },
       { new: true }
-    ).populate('favoriteProducts').exec();
+    ).exec();
     
     if (!updated) {
       throw new NotFoundException('Usuario no encontrado');
