@@ -35,6 +35,6 @@ export class AuthService {
 
   async register(email: string, password: string) {
     const user = await this.usersService.create(email, password);
-    return this.login({ id: user.id, email: user.email });
+    return this.login({ id: (user as any)._id.toString(), email: user.email });
   }
 }

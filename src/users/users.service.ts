@@ -10,11 +10,11 @@ export class UsersService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
   ) {}
 
-  async findOne(email: string): Promise<User | undefined> {
+  async findOne(email: string): Promise<UserDocument | null> {
     return this.userModel.findOne({ email }).exec();
   }
 
-  async findById(id: string): Promise<User | undefined> {
+  async findById(id: string): Promise<UserDocument | null> {
     return this.userModel.findById(id).populate('favoriteProducts').exec();
   }
   
@@ -36,7 +36,7 @@ export class UsersService {
     return newUser.save();
   }
 
-  async addFavoriteProduct(userId: string, productId: string): Promise<User> {
+  async addFavoriteProduct(userId: string, productId: string): Promise<UserDocument | null> {
     const user = await this.userModel.findById(userId).exec();
     
     if (!user) {
@@ -56,7 +56,7 @@ export class UsersService {
     return this.userModel.findById(userId).populate('favoriteProducts').exec();
   }
 
-  async removeFavoriteProduct(userId: string, productId: string): Promise<User> {
+  async removeFavoriteProduct(userId: string, productId: string): Promise<UserDocument | null> {
     const updated = await this.userModel.findByIdAndUpdate(
       userId,
       { $pull: { favoriteProducts: productId } },

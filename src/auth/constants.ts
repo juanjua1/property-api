@@ -1,3 +1,3 @@
 export const jwtConstants = {
-  secret: 'your-secret-key', // En producción, usa una variable de entorno
+  secret: 'your-super-secret-jwt-key-for-development-only', // En producción, usa una variable de entorno
 };

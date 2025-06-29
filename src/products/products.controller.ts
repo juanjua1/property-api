@@ -1,14 +1,12 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ValidationPipe } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { Product } from './schemas/product.schema';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { UsersService } from '../users/users.service';
+import { CreateProductDto } from './dto/create-product.dto';
 
 @Controller('products')
 export class ProductsController {
   constructor(
     private productsService: ProductsService,
-    private usersService: UsersService,
   ) {}
 
   @Get()
@@ -22,26 +20,7 @@ export class ProductsController {
   }
 
   @Post()
-  create(@Body() createProductDto: Partial<Product>): Promise<Product> {
+  create(@Body(ValidationPipe) createProductDto: CreateProductDto): Promise<Product> {
     return this.productsService.create(createProductDto);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Post('favorite/:id')
-  async addFavorite(@Request() req, @Param('id') productId: string) {
-    return this.usersService.addFavoriteProduct(req.user.userId, productId);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Post('unfavorite/:id')
-  async removeFavorite(@Request() req, @Param('id') productId: string) {
-    return this.usersService.removeFavoriteProduct(req.user.userId, productId);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('favorites')
-  async getFavorites(@Request() req) {
-    const user = await this.usersService.findById(req.user.userId);
-    return user.favoriteProducts;
   }
 }
