@@ -14,8 +14,10 @@ export class AuthService {
     const user = await this.usersService.findOne(email);
     
     if (user && await bcrypt.compare(pass, user.password)) {
-      const { password, ...result } = user;
-      return result;
+      // Convertir el documento de Mongoose a objeto plano
+      const userObject = JSON.parse(JSON.stringify(user));
+      const { password, ...result } = userObject;
+      return { ...result, id: userObject._id };
     }
     
     return null;
@@ -35,6 +37,10 @@ export class AuthService {
 
   async register(email: string, password: string) {
     const user = await this.usersService.create(email, password);
-    return this.login({ id: (user as any)._id.toString(), email: user.email });
+    const userObject = JSON.parse(JSON.stringify(user));
+    return {
+      id: userObject._id,
+      email: userObject.email
+    };
   }
 }
