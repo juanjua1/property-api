@@ -5,7 +5,9 @@ import { AppModule } from './app.module';
 import { SeedService } from './seed/seed.service';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: ['error', 'warn', 'log']
+  });
   const configService = app.get(ConfigService);
   
   app.useGlobalPipes(new ValidationPipe({
@@ -24,8 +26,15 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
-  const seedService = app.get(SeedService);
-  await seedService.seedProducts();
+  // Only seed in development or when explicitly requested
+  if (configService.get<string>('NODE_ENV') === 'development') {
+    try {
+      const seedService = app.get(SeedService);
+      await seedService.seedProducts();
+    } catch (error) {
+      console.log('Seed service error:', error.message);
+    }
+  }
   
   const port = configService.get<number>('PORT') || process.env.PORT || 3000;
   await app.listen(port, '0.0.0.0');
@@ -33,4 +42,8 @@ async function bootstrap() {
   console.log('🚀 Property API is running on port', port);
   console.log('🌍 Environment:', configService.get<string>('NODE_ENV'));
 }
-bootstrap();
+
+// Only bootstrap if this file is run directly (not imported)
+if (require.main === module) {
+  bootstrap();
+}
