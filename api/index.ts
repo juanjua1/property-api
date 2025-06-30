@@ -1,9 +1,12 @@
+import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import { AppModule } from '../src/app.module';
 import express from 'express';
+
+// Import modules directly
+import { AppModule } from '../src/app.module';
 
 let app: any;
 
@@ -40,16 +43,8 @@ async function createApp() {
         allowedHeaders: ['Content-Type', 'Authorization'],
       });
 
-      // Skip seeding in production serverless environment
-      if (process.env.NODE_ENV !== 'production') {
-        try {
-          const { SeedService } = await import('../src/seed/seed.service');
-          const seedService = nestApp.get(SeedService);
-          await seedService.seedProducts();
-        } catch (error) {
-          console.log('Seed service error (expected in serverless):', error.message);
-        }
-      }
+      // Skip seeding in production serverless environment to avoid timeouts
+      console.log('🔥 Skipping seed in production serverless environment');
 
       await nestApp.init();
       app = expressApp;
