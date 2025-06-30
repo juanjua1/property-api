@@ -1,0 +1,28 @@
+# Archivos de entorno
+.env
+.env.local
+.env.production
+.env.example
+
+# Configuraciones de otras plataformas
+railway.json
+Dockerfile
+.dockerignore
+
+# Archivos de desarrollo
+data-export/
+exported-data.json
+import-data.js
+export-data.js
+test-atlas.js
+
+# Logs
+*.log
+npm-debug.log*
+
+# Node modules
+node_modules/
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
