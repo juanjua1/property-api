@@ -14,7 +14,6 @@ export class SeedService {
 
   async seedProducts() {
     try {
-      // Verificar si ya hay productos
       const existingProducts = await this.productModel.countDocuments();
       
       if (existingProducts > 0) {
@@ -22,7 +21,6 @@ export class SeedService {
         return;
       }
 
-      // Insertar productos de ejemplo
       await this.productModel.insertMany(sampleProperties);
       this.logger.log(`Se insertaron ${sampleProperties.length} productos de ejemplo`);
     } catch (error) {

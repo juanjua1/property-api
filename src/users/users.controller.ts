@@ -15,7 +15,6 @@ export class UsersController {
     if (!user) {
       throw new NotFoundException('Usuario no encontrado');
     }
-    // Convertir el documento de Mongoose a objeto plano
     const userObject = JSON.parse(JSON.stringify(user));
     const { password, ...result } = userObject;
     return result;

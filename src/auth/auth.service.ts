@@ -14,7 +14,6 @@ export class AuthService {
     const user = await this.usersService.findOne(email);
     
     if (user && await bcrypt.compare(pass, user.password)) {
-      // Convertir el documento de Mongoose a objeto plano
       const userObject = JSON.parse(JSON.stringify(user));
       const { password, ...result } = userObject;
       return { ...result, id: userObject._id };

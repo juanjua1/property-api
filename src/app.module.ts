@@ -8,13 +8,11 @@ import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
-    // Configuración de variables de entorno
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
     }),
     
-    // MongoDB usando variables de entorno
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({

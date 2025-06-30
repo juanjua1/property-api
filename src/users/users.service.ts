@@ -43,7 +43,6 @@ export class UsersService {
       throw new NotFoundException('Usuario no encontrado');
     }
 
-    // Verificar si el producto ya está en favoritos
     const exists = user.favoriteProducts.includes(productId);
     
     if (!exists) {
