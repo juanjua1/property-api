@@ -1,18 +1,18 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "api/index.ts",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": ["src/**"]
-      }
+  "functions": {
+    "api/*.ts": {
+      "runtime": "@vercel/node@3"
     }
-  ],
+  },
   "routes": [
     {
+      "src": "/api/(.*)",
+      "dest": "/api/index"
+    },
+    {
       "src": "/(.*)",
-      "dest": "api/index.ts"
+      "dest": "/api/index"
     }
   ]
 }
