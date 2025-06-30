@@ -15,9 +15,12 @@ import { SeedModule } from './seed/seed.module';
     
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGODB_URI') || 'mongodb://localhost:27018/property_db',
-      }),
+      useFactory: async (configService: ConfigService) => {
+        const uri = configService.get<string>('DATABASE_URL') || 
+                   configService.get<string>('MONGODB_URI') || 
+                   'mongodb://localhost:27017/property_db';
+        return { uri };
+      },
       inject: [ConfigService],
     }),
     
